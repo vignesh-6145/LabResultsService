@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/LabResultsService.API/LabResultsService.API.csproj" />
+    <Project Path="src/LabResultsService.Repository/LabResultsService.Repository.csproj" Id="7e3e314c-6a88-4c3b-81a9-756515c1f666" />
+  </Folder>
+</Solution>
