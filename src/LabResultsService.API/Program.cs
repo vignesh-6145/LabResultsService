@@ -1,3 +1,5 @@
+using LabResultsService.Repository;
+using LabResultsService.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSerilog((services, lc) => lc
        .ReadFrom.Configuration(builder.Configuration)
        .ReadFrom.Services(services));
+
+builder.Services.RegisterServices();
+builder.Services.RegisterContext(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("connectionString"));
+builder.Services.RegisterRepositories();
 
 var app = builder.Build();
 
