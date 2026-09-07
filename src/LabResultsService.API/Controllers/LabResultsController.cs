@@ -51,10 +51,13 @@ namespace LabResultsService.API.Controllers
             return Ok(records);
         }
 
-        [HttpPut]
-        public IActionResult UpdateLabResultAsync(string DummyModel)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateLabResultAsync(string id, [FromBody] UpdateLabResultDTO request)
         {
-            return Ok(DummyModel);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id,nameof(id));
+
+            var recordUpdated = await _labResultsService.UpdateLabResult(id, request);
+            return recordUpdated ? Ok() : BadRequest();
         }
 
         [HttpDelete("{id}")]

@@ -9,5 +9,6 @@ namespace LabResultsService.Services.Interfaces
         public Task<LabResult?> GetLabResultByIdAsync(string _); 
         public Task<IEnumerable<LabResult>> FilterLabResultsByPatientIdAsync(string _, bool includeDeletedRecords = false);
         public Task<bool> SoftDeleteLabResultAsync(string _);
+        public Task<bool> UpdateLabResult(string id, UpdateLabResultDTO _);
     }
 }

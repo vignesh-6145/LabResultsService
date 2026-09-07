@@ -83,5 +83,68 @@ namespace LabResultsService.Services.Services
             }
             return labResultId;
         }
+
+        public async Task<bool> UpdateLabResult(string id, UpdateLabResultDTO updatedRecord)
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
+
+            var validGuid = Guid.TryParse(id, out var parsedId);
+
+            if (!validGuid)
+            {
+                throw new InvalidDataException(id);
+            }
+
+            var existantRecord = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
+            string originalValue = string.Empty;
+
+            if (existantRecord is null)
+            {
+                throw new ResourceNotFoundException($"No amtching {nameof(existantRecord)} record found for Id {id}");
+            }
+            
+            if (updatedRecord.PatientId.HasValue)
+            {
+                originalValue = existantRecord.PatientId.ToString();
+                existantRecord.PatientId = updatedRecord.PatientId.Value;
+                _logger.LogInformation("Transferred the record from {OriginalPatientId} to {ModifiedPatientId}",originalValue, updatedRecord.PatientId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(updatedRecord.TestName))
+            {
+                originalValue = existantRecord.TestName;
+                existantRecord.TestName = updatedRecord.TestName;
+                _logger.LogInformation("Modified the TestRecordName from {OriginalTestName} to {ModifiedTestName}", originalValue, updatedRecord.TestName);
+            }
+
+            if (!string.IsNullOrWhiteSpace(updatedRecord.ResultValue))
+            {
+                originalValue = existantRecord.ResultValue;
+                existantRecord.ResultValue = updatedRecord.ResultValue;
+                _logger.LogInformation("Modified the ResultValue from {OriginalResultValue} to {ModifiedResultValue}", originalValue, updatedRecord.ResultValue);
+            }
+
+            if (!string.IsNullOrWhiteSpace(updatedRecord.Unit))
+            {
+                originalValue = existantRecord.Unit;
+                existantRecord.Unit = updatedRecord.Unit;
+                _logger.LogInformation("Modified the Unit from {OriginalUnit} to {Modifiedunit}", originalValue, updatedRecord.Unit);
+            }
+
+            if (updatedRecord.ObservedDate.HasValue)
+            {
+                originalValue = existantRecord.ObservedDate.ToString();
+                existantRecord.ObservedDate = updatedRecord.ObservedDate.Value;
+                _logger.LogInformation("Modified the ObservedDate from {OriginalObservedDate} to {ModifiedObservedDate}", originalValue, updatedRecord.ObservedDate.ToString());
+            }
+
+            if (updatedRecord.IsActive.HasValue)
+            {
+                originalValue = existantRecord.IsActive.ToString();
+                existantRecord.IsActive = updatedRecord.IsActive.Value;
+            }
+
+            return await _labResultsRepository.UpdateLabResultAsync(existantRecord);
+        }
     }
 }
