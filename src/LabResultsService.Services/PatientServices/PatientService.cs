@@ -31,5 +31,19 @@ namespace LabResultsService.Services.PatientServices
 
             return Guid.Empty;
         }
+
+        public Task<bool> IsAValidUser(string id)
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
+
+            var validGuid = Guid.TryParse(id, out var parsedId);
+
+            if (!validGuid)
+            {
+                throw new InvalidDataException(id);
+            }
+
+            return _patientRepository.UserExists(parsedId);
+        }
     }
 }

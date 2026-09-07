@@ -1,6 +1,7 @@
 ﻿using LabResultsService.Repository.Data;
 using LabResultsService.Repository.Data.Models;
 using LabResultsService.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,12 @@ namespace LabResultsService.Repository.Repositories
                 _logger.LogError(ex, "Failed to Insert patient Record. Message {ErrorMessage}",ex.InnerException);
             }
             return Guid.Empty;
+        }
+
+        public async Task<bool> UserExists(Guid id)
+        {
+            var user = await _dbContext.LabResults.FirstOrDefaultAsync(record => record.Id == id && record.IsActive);
+            return (user != null);
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LabResultsService.Services.Services
 {
-    public class LabResultsService(ILabResultsRepository _labResultsRepository, ILogger<LabResultsService> _logger) : ILabResultsService
+    public class LabResultsService(ILabResultsRepository _labResultsRepository, IPatientService _patientService, ILogger<LabResultsService> _logger) : ILabResultsService
     {
         public async Task<bool> SoftDeleteLabResultAsync(string id)
         {
@@ -24,7 +24,7 @@ namespace LabResultsService.Services.Services
             var labResult = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
             if (labResult is null)
             {
-                throw new ResourceNotFoundException($"No amtching {nameof(labResult)} record found for Id {id}");
+                throw new ResourceNotFoundException($"No matching {nameof(labResult)} record found for Id {id}");
             }
             labResult.IsActive = false;
 
@@ -42,7 +42,13 @@ namespace LabResultsService.Services.Services
                 throw new InvalidDataException(patientId);
             }
 
-            //TODO : check valid user
+            var userExists = await _patientService.IsAValidUser(patientId);
+            if (!userExists)
+            {
+                _logger.LogInformation("No patient Exists with the given Id {Patientid}",patientId);
+                throw new ResourceNotFoundException($"No matching patient record found for Id {patientId}");
+            }
+
             var patientRecords = await _labResultsRepository.GetLabResultsBypatientIdAsync(parsedId);
 
             if (includeDeletedRecords)
@@ -105,6 +111,13 @@ namespace LabResultsService.Services.Services
             
             if (updatedRecord.PatientId.HasValue)
             {
+                var userExists = await _patientService.IsAValidUser(updatedRecord.PatientId.Value.ToString());
+                if (!userExists)
+                {
+                    _logger.LogInformation("No patient Exists with the given Id {Patientid}", updatedRecord.PatientId.Value.ToString());
+                    throw new ResourceNotFoundException($"No matching patient record found for Id {updatedRecord.PatientId.Value.ToString()}");
+                }
+
                 originalValue = existantRecord.PatientId.ToString();
                 existantRecord.PatientId = updatedRecord.PatientId.Value;
                 _logger.LogInformation("Transferred the record from {OriginalPatientId} to {ModifiedPatientId}",originalValue, updatedRecord.PatientId);
