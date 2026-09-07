@@ -24,16 +24,31 @@ namespace LabResultsService.API.Controllers
             return BadRequest();
         }
 
-        [HttpGet("{Id}")]
-        public IActionResult GetLabResult(string Id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetLabResult(string id)
         {
-            return Ok(Id);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id,nameof(id));
+            var record = await _labResultsService.GetLabResultById(id);
+
+            if (record is null){
+                return NotFound();
+            }
+
+            return Ok(record);
         }
 
         [HttpGet]
-        public IActionResult GetLabResultByPatientId([FromQuery] string PatientId)
+        public async Task<IActionResult> GetLabResultByPatientId([FromQuery] string patientId)
         {
-            return Ok($"patient Id {PatientId}");
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(patientId, nameof(patientId));
+            var records = await _labResultsService.FilterLabResultsByPatientId(patientId);
+
+            if (records is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(records);
         }
 
         [HttpPut]
@@ -42,10 +57,10 @@ namespace LabResultsService.API.Controllers
             return Ok(DummyModel);
         }
 
-        [HttpDelete("{Id}")]
-        public IActionResult DeleteLabResult(string Id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteLabResult(string id)
         {
-            return Ok(Id);
+            return Ok(id);
         }
     }
 }

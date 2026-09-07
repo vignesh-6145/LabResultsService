@@ -1,4 +1,5 @@
-﻿using LabResultsService.Repository.Interfaces;
+﻿using LabResultsService.Repository.Data.Models;
+using LabResultsService.Repository.Interfaces;
 using LabResultsService.Services.DTOs;
 using LabResultsService.Services.Interfaces;
 using LabResultsService.Services.ModelMapper;
@@ -8,6 +9,35 @@ namespace LabResultsService.Services.Services
 {
     public class LabResultsService(ILabResultsRepository _labResultsRepository, ILogger<LabResultsService> _logger) : ILabResultsService
     {
+        public async Task<IEnumerable<LabResult>> FilterLabResultsByPatientId(string patientId)
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(patientId);
+
+            var validGuid = Guid.TryParse(patientId, out var parsedId);
+
+            if (!validGuid)
+            {
+                throw new InvalidDataException(patientId);
+            }
+
+            //TODO : check valid user
+            return await _labResultsRepository.GetLabResultsBypatientIdAsync(parsedId);
+        }
+
+        public async Task<LabResult?> GetLabResultById(string id)
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
+
+            var validGuid = Guid.TryParse(id, out var parsedId);
+
+            if (!validGuid)
+            {
+                throw new InvalidDataException(id);
+            }
+
+            return await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
+        }
+
         public async Task<Guid> RecordLabResultAsync(RecordLabResultDTO request)
         {
 
