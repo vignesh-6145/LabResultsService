@@ -15,6 +15,7 @@ namespace LabResultsService.Repository.Data
         {
             base.OnModelCreating(modelBuilder);
             OnPatientModelCreation(modelBuilder);
+            OnLabResultModelCreation(modelBuilder);
         }
 
         private void OnPatientModelCreation(ModelBuilder modelBuilder)
@@ -36,6 +37,31 @@ namespace LabResultsService.Repository.Data
                 entity.HasMany(p => p.PatientTestResults)
                     .WithOne()
                     .HasForeignKey(l => l.PatientId);
+            });
+        }
+
+        private void OnLabResultModelCreation(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<LabResult>(entity =>
+            {
+                entity.Property(x => x.PatientId)
+                    .IsRequired();
+
+                entity.Property(x => x.TestName)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(x => x.ResultValue)
+                    .HasMaxLength(256)
+                    .IsRequired();
+
+                entity.Property(x => x.Unit)
+                    .HasMaxLength(32)
+                    .IsRequired();
+
+                entity.Property(x => x.ObservedDate)
+                    .HasColumnType("datetime2")
+                    .IsRequired();
             });
         }
 

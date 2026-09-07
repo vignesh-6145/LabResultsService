@@ -8,12 +8,12 @@ namespace LabResultsService.API.Controllers
     [ApiController]
     public class PatientsController(IPatientService _patientService, ILogger<PatientsController> _logger) : ControllerBase
     {
-        [HttpPost("create")]
-        public async Task<IActionResult> CreatePatient([FromBody] CreatePatientDTO createPatientDTO)
+        [HttpPost("createAPatientRecord")]
+        public async Task<IActionResult> CreatePatient([FromBody] CreatePatientDTO request)
         {
             try
             {
-                var patientId = await _patientService.CreatePatientRecordAsync(createPatientDTO);
+                var patientId = await _patientService.CreatePatientRecordAsync(request);
                 return patientId == Guid.Empty ? BadRequest() : Ok(patientId);
             }
             catch (Exception ex) {

@@ -15,7 +15,6 @@ namespace LabResultsService.Services.ViewModels
         [MaxLength(126, ErrorMessage = "Last name must not exceed 126 characters.")]
         public string LastName { get; set; }
 
-        [AllowNull]
         public string MiddleName { get; set; }
     }
 }

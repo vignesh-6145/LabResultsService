@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LabResultsService.Core\LabResultsService.Core.csproj" />
-    <ProjectReference Include="..\LabResultsService.Repository\LabResultsService.Repository.csproj" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
 </Project>

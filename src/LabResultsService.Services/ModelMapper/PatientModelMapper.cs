@@ -7,9 +7,9 @@ namespace LabResultsService.Services.ModelMapper
     {
         public static Patient FromCreatePatientDto(CreatePatientDTO dto) => new()
         {
-             FirstName = dto.FirstName,   
-             LastName = dto.LastName,
-             MiddleName = dto.MiddleName,
+             FirstName = dto.FirstName.Trim(),   
+             LastName = dto.LastName.Trim(),
+             MiddleName = dto.MiddleName.Trim(),
         };
     }
 }

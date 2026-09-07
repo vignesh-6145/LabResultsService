@@ -19,4 +19,8 @@
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LabResultsService.Core\LabResultsService.Core.csproj" />
+  </ItemGroup>
+
 </Project>

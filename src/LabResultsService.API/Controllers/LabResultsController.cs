@@ -1,16 +1,27 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LabResultsService.Services.DTOs;
+using LabResultsService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabResultsService.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LabResultsController : ControllerBase
+    public class LabResultsController(ILabResultsService _labResultsService, ILogger<LabResultsController> _logger) : ControllerBase
     {
         [HttpPost]
-        public IActionResult LabResults()
+        public async Task<IActionResult> RecordLabResults([FromBody] RecordLabResultDTO request)
         {
-            return Ok();
+            try
+            {
+                var labResultId = await _labResultsService.RecordLabResultAsync(request);
+
+                return labResultId==Guid.Empty ? BadRequest() : Ok(labResultId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Something went wrong while Recording a Lab Result. Message {ErrorMessage}", ex.InnerException);
+            }
+            return BadRequest();
         }
 
         [HttpGet("{Id}")]
@@ -20,7 +31,7 @@ namespace LabResultsService.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetLabResultByPatientId([FromQuery]string PatientId)
+        public IActionResult GetLabResultByPatientId([FromQuery] string PatientId)
         {
             return Ok($"patient Id {PatientId}");
         }

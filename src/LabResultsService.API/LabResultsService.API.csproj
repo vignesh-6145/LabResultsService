@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LabResultsService.Core\LabResultsService.Core.csproj" />
     <ProjectReference Include="..\LabResultsService.Services\LabResultsService.Services.csproj" />
   </ItemGroup>
 

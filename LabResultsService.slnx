@@ -5,6 +5,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/LabResultsService.API/LabResultsService.API.csproj" />
+    <Project Path="src/LabResultsService.Core/LabResultsService.Core.csproj" Id="3fe8d5da-ef29-4517-bbe7-7886341646fa" />
     <Project Path="src/LabResultsService.Repository/LabResultsService.Repository.csproj" Id="7e3e314c-6a88-4c3b-81a9-756515c1f666" />
     <Project Path="src/LabResultsService.Services/LabResultsService.Services.csproj" Id="917c3688-7a20-4d2e-b923-61262c00ec75" />
   </Folder>

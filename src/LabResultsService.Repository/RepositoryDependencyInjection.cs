@@ -19,6 +19,7 @@ namespace LabResultsService.Repository
         public static void RegisterRepositories(this IServiceCollection services)
         {
             services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<ILabResultsRepository, LabResultRepository>();
         }
 
     }
