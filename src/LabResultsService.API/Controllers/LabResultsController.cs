@@ -9,7 +9,7 @@ namespace LabResultsService.API.Controllers
     public class LabResultsController(ILabResultsService _labResultsService, ILogger<LabResultsController> _logger) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> RecordLabResults([FromBody] RecordLabResultDTO request)
+        public async Task<IActionResult> RecordLabResultsAsync([FromBody] RecordLabResultDTO request)
         {
             try
             {
@@ -25,10 +25,10 @@ namespace LabResultsService.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetLabResult(string id)
+        public async Task<IActionResult> GetLabResultAsync(string id)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id,nameof(id));
-            var record = await _labResultsService.GetLabResultById(id);
+            var record = await _labResultsService.GetLabResultByIdAsync(id);
 
             if (record is null){
                 return NotFound();
@@ -38,10 +38,10 @@ namespace LabResultsService.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLabResultByPatientId([FromQuery] string patientId)
+        public async Task<IActionResult> GetLabResultByPatientIdAsync([FromQuery] string patientId, [FromQuery] bool includeDeletedRecords = false)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(patientId, nameof(patientId));
-            var records = await _labResultsService.FilterLabResultsByPatientId(patientId);
+            var records = await _labResultsService.FilterLabResultsByPatientIdAsync(patientId, includeDeletedRecords);
 
             if (records is null)
             {
@@ -52,15 +52,17 @@ namespace LabResultsService.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateLabResult(string DummyModel)
+        public IActionResult UpdateLabResultAsync(string DummyModel)
         {
             return Ok(DummyModel);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteLabResult(string id)
+        public async Task<IActionResult> DeleteLabResultAsync(string id)
         {
-            return Ok(id);
+            var recordUpdated = await _labResultsService.SoftDeleteLabResultAsync(id);
+
+            return recordUpdated ? Ok() : BadRequest();
         }
     }
 }

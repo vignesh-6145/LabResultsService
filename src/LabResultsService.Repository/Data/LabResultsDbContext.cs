@@ -37,6 +37,9 @@ namespace LabResultsService.Repository.Data
                 entity.HasMany(p => p.PatientTestResults)
                     .WithOne()
                     .HasForeignKey(l => l.PatientId);
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
             });
         }
 
@@ -62,6 +65,9 @@ namespace LabResultsService.Repository.Data
                 entity.Property(x => x.ObservedDate)
                     .HasColumnType("datetime2")
                     .IsRequired();
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
             });
         }
 

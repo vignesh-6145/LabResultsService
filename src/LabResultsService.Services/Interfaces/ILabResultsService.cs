@@ -6,7 +6,8 @@ namespace LabResultsService.Services.Interfaces
     public interface ILabResultsService
     {
         public Task<Guid> RecordLabResultAsync(RecordLabResultDTO _);
-        public Task<LabResult?> GetLabResultById(string _); 
-        public Task<IEnumerable<LabResult>> FilterLabResultsByPatientId(string _);
+        public Task<LabResult?> GetLabResultByIdAsync(string _); 
+        public Task<IEnumerable<LabResult>> FilterLabResultsByPatientIdAsync(string _, bool includeDeletedRecords = false);
+        public Task<bool> SoftDeleteLabResultAsync(string _);
     }
 }

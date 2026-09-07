@@ -1,4 +1,5 @@
-﻿using LabResultsService.Repository.Data.Models;
+﻿using LabResultsService.Core.Exceptions;
+using LabResultsService.Repository.Data.Models;
 using LabResultsService.Repository.Interfaces;
 using LabResultsService.Services.DTOs;
 using LabResultsService.Services.Interfaces;
@@ -9,7 +10,28 @@ namespace LabResultsService.Services.Services
 {
     public class LabResultsService(ILabResultsRepository _labResultsRepository, ILogger<LabResultsService> _logger) : ILabResultsService
     {
-        public async Task<IEnumerable<LabResult>> FilterLabResultsByPatientId(string patientId)
+        public async Task<bool> SoftDeleteLabResultAsync(string id)
+        {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
+
+            var validGuid = Guid.TryParse(id, out var parsedId);
+
+            if (!validGuid)
+            {
+                throw new InvalidDataException(id);
+            }
+
+            var labResult = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
+            if (labResult is null)
+            {
+                throw new ResourceNotFoundException($"No amtching {nameof(labResult)} record found for Id {id}");
+            }
+            labResult.IsActive = false;
+
+            return await _labResultsRepository.UpdateLabResultAsync(labResult);
+        }
+
+        public async Task<IEnumerable<LabResult>> FilterLabResultsByPatientIdAsync(string patientId, bool includeDeletedRecords = false)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(patientId);
 
@@ -21,10 +43,15 @@ namespace LabResultsService.Services.Services
             }
 
             //TODO : check valid user
-            return await _labResultsRepository.GetLabResultsBypatientIdAsync(parsedId);
+            var patientRecords = await _labResultsRepository.GetLabResultsBypatientIdAsync(parsedId);
+
+            if (includeDeletedRecords)
+                return patientRecords;
+
+            return patientRecords.Where(record => record.IsActive);
         }
 
-        public async Task<LabResult?> GetLabResultById(string id)
+        public async Task<LabResult?> GetLabResultByIdAsync(string id)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
 

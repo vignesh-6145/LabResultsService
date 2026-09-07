@@ -33,5 +33,20 @@ namespace LabResultsService.Repository.Repositories
             var patientRecords = await _dbContext.LabResults.Where(record => record.PatientId == patientId).ToListAsync();
             return patientRecords;
         }
+
+        public async Task<bool> UpdateLabResultAsync(LabResult labRecordInfo)
+        {
+            try
+            {
+                _dbContext.LabResults.Update(labRecordInfo);
+                await _dbContext.SaveChangesAsync();
+                _logger.LogInformation($"Changes were updated in the records");
+                return true;
+            }catch(Exception ex)
+            {
+                _logger.LogError(ex, "Unable to update the record. Message {ErrorMessage}",ex.InnerException);
+            }
+            return false;
+        }
     }
 }

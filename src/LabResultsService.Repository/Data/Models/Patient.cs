@@ -12,5 +12,6 @@ namespace LabResultsService.Repository.Data.Models
         public string LastName { get; set; }
 
         public IEnumerable<LabResult> PatientTestResults = new List<LabResult>();
+        public bool IsActive { get; set; }
     }
 }

@@ -8,5 +8,6 @@
         public string ResultValue { get; set; }
         public string Unit { get; set; }
         public DateTime ObservedDate { get; set; }
+        public bool IsActive { get; set; }
     }
 }

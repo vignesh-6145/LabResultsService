@@ -10,5 +10,6 @@ namespace LabResultsService.Repository.Interfaces
         public Task<Guid> AddlabResultAsync(LabResult labResultInformation);
         public Task<IEnumerable<LabResult>> GetLabResultsBypatientIdAsync(Guid patientId);
         public Task<LabResult?> GetLabResultsByIdAsync(Guid Id);
+        public Task<bool> UpdateLabResultAsync(LabResult labRecordInfo);
     }
 }
