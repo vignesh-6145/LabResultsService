@@ -2,13 +2,13 @@
 {
     public static class GuidUtils
     {
-        public static Guid ParseGuidOrThrow(string patientId)
+        public static Guid ParseGuidOrThrow(string id)
         {
-            var validGuid = Guid.TryParse(patientId, out var parsedId);
+            var validGuid = Guid.TryParse(id, out var parsedId);
 
             if (!validGuid || parsedId == Guid.Empty)
             {
-                throw new InvalidDataException(patientId);
+                throw new InvalidDataException($"Invalid ID: '{id}'.");
             }
 
             return parsedId;

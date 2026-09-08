@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace LabResultsService.Services.ViewModels
+namespace LabResultsService.Services.DTOs
 {
     public class CreatePatientDTO
     {

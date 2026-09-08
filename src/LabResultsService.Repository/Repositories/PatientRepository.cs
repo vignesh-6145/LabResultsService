@@ -3,9 +3,6 @@ using LabResultsService.Repository.Data.Models;
 using LabResultsService.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LabResultsService.Repository.Repositories
 {
@@ -13,24 +10,17 @@ namespace LabResultsService.Repository.Repositories
     {
         public async Task<Guid> AddPatientAsync(Patient patientDetails)
         {
-            try
-            {
-                await _dbContext.Patients.AddAsync(patientDetails);
-                await _dbContext.SaveChangesAsync();
+            await _dbContext.Patients.AddAsync(patientDetails);
+            await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Patient {FirstName} added.",patientDetails.FirstName);
+            _logger.LogInformation("Patient {FirstName} added.", patientDetails.FirstName);
 
-                return patientDetails.Id;
-            }catch(Exception ex)
-            {
-                _logger.LogError(ex, "Failed to Insert patient Record. Message {ErrorMessage}",ex.InnerException);
-            }
-            return Guid.Empty;
+            return patientDetails.Id;
         }
 
         public async Task<bool> PatientExistsAsync(Guid id)
         {
-            if(id == Guid.Empty)
+            if (id == Guid.Empty)
             {
                 return false;
             }

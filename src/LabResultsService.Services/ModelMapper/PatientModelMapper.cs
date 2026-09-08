@@ -1,5 +1,5 @@
 ﻿using LabResultsService.Repository.Data.Models;
-using LabResultsService.Services.ViewModels;
+using LabResultsService.Services.DTOs;
 
 namespace LabResultsService.Services.ModelMapper
 {

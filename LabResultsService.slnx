@@ -9,4 +9,7 @@
     <Project Path="src/LabResultsService.Repository/LabResultsService.Repository.csproj" Id="7e3e314c-6a88-4c3b-81a9-756515c1f666" />
     <Project Path="src/LabResultsService.Services/LabResultsService.Services.csproj" Id="917c3688-7a20-4d2e-b923-61262c00ec75" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LabResultsService.Services.Tests/LabResultsService.Services.Tests.csproj" Id="9c049d28-30c2-41a2-8a62-dec4c63d107d" />
+  </Folder>
 </Solution>

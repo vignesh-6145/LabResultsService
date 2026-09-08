@@ -7,11 +7,11 @@ namespace LabResultsService.Services.ModelMapper
     {
         public static LabResult FromRecordLabResultDTO(RecordLabResultDTO dto) => new()
         {
-            ObservedDate = DateTime.Now,
+            ObservedDate = dto.ObservedDate.HasValue ? dto.ObservedDate.Value : DateTime.Now,
             PatientId = Guid.Parse(dto.PatientId),
             ResultValue = dto.ResultValue.Trim(),
             TestName = dto.TestName.Trim(),
-            Unit = dto.TestName.Trim()
+            Unit = dto.Unit.Trim()
         };
     }
 }

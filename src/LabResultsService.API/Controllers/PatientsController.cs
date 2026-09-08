@@ -1,5 +1,5 @@
-﻿using LabResultsService.Services.Interfaces;
-using LabResultsService.Services.ViewModels;
+﻿using LabResultsService.Services.DTOs;
+using LabResultsService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LabResultsService.API.Controllers
@@ -9,6 +9,8 @@ namespace LabResultsService.API.Controllers
     public class PatientsController(IPatientService _patientService, ILogger<PatientsController> _logger) : ControllerBase
     {
         [HttpPost("createAPatientRecord")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePatient([FromBody] CreatePatientDTO request)
         {
             try
@@ -16,11 +18,11 @@ namespace LabResultsService.API.Controllers
                 var patientId = await _patientService.CreatePatientRecordAsync(request);
                 return patientId == Guid.Empty ? BadRequest() : Ok(patientId);
             }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Something went wrong while creating patient record. Message {ErrorMessage}",ex.InnerException);
+            catch (Exception aex) when (aex is ArgumentNullException || aex is InvalidDataException)
+            {
+                _logger.LogError(aex, "Invalid Data Found. Message {ErrorMessage}", aex.Message);
+                return BadRequest(aex.Message);
             }
-            return BadRequest();
-
         }
 
     }

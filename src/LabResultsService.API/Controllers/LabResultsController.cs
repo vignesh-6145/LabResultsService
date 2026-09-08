@@ -35,7 +35,7 @@ namespace LabResultsService.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetLabResultAsync(string id)
         {
@@ -45,7 +45,7 @@ namespace LabResultsService.API.Controllers
 
                 if (record is null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 return Ok(record);

@@ -1,4 +1,4 @@
-﻿using LabResultsService.Services.ViewModels;
+﻿using LabResultsService.Services.DTOs;
 
 namespace LabResultsService.Services.Interfaces
 {

@@ -11,6 +11,7 @@ namespace LabResultsService.Services.Services
 {
     public class LabResultsService(ILabResultsRepository _labResultsRepository, IPatientService _patientService, ILogger<LabResultsService> _logger) : ILabResultsService
     {
+
         public async Task<bool> SoftDeleteLabResultAsync(string id)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
@@ -81,54 +82,48 @@ namespace LabResultsService.Services.Services
             Guid parsedId = GuidUtils.ParseGuidOrThrow(id);
 
             var existantRecord = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
-            string originalValue = string.Empty;
-
             if (existantRecord is null)
             {
                 throw new ResourceNotFoundException($"No matching {nameof(existantRecord)} record found for Id {id}");
             }
-            
+
             if (updatedRecord.PatientId.HasValue)
             {
                 await ValidateExistingUser(updatedRecord.PatientId.Value.ToString());
 
-                originalValue = existantRecord.PatientId.ToString();
                 existantRecord.PatientId = updatedRecord.PatientId.Value;
-                _logger.LogInformation("Transferred the record from {OriginalPatientId} to {ModifiedPatientId}",originalValue, updatedRecord.PatientId);
+                _logger.LogInformation("Updated LabResult {LabResultId}; field PatientId", id);
             }
 
             if (!string.IsNullOrWhiteSpace(updatedRecord.TestName))
             {
-                originalValue = existantRecord.TestName;
                 existantRecord.TestName = updatedRecord.TestName;
-                _logger.LogInformation("Modified the TestRecordName from {OriginalTestName} to {ModifiedTestName}", originalValue, updatedRecord.TestName);
+                _logger.LogInformation("Updated LabResult {LabResultId}; field TestName", id);
             }
 
             if (!string.IsNullOrWhiteSpace(updatedRecord.ResultValue))
             {
-                originalValue = existantRecord.ResultValue;
                 existantRecord.ResultValue = updatedRecord.ResultValue;
-                _logger.LogInformation("Modified the ResultValue from {OriginalResultValue} to {ModifiedResultValue}", originalValue, updatedRecord.ResultValue);
+                _logger.LogInformation("Updated LabResult {LabResultId}; field ResultValue", id);
             }
 
             if (!string.IsNullOrWhiteSpace(updatedRecord.Unit))
             {
-                originalValue = existantRecord.Unit;
                 existantRecord.Unit = updatedRecord.Unit;
-                _logger.LogInformation("Modified the Unit from {OriginalUnit} to {ModifiedUnit}", originalValue, updatedRecord.Unit);
+                _logger.LogInformation("Updated LabResult {LabResultId}; field Unit", id);
             }
 
             if (updatedRecord.ObservedDate.HasValue)
             {
-                originalValue = existantRecord.ObservedDate.ToString();
                 existantRecord.ObservedDate = updatedRecord.ObservedDate.Value;
-                _logger.LogInformation("Modified the ObservedDate from {OriginalObservedDate} to {ModifiedObservedDate}", originalValue, updatedRecord.ObservedDate.ToString());
+                _logger.LogInformation("Updated LabResult {LabResultId}; field ObservedDate", id);
             }
 
             if (updatedRecord.IsActive.HasValue)
             {
-                originalValue = existantRecord.IsActive.ToString();
                 existantRecord.IsActive = updatedRecord.IsActive.Value;
+                _logger.LogInformation("Updated LabResult {LabResultId}; field IsActive", id);
+
             }
 
             return await _labResultsRepository.UpdateLabResultAsync(existantRecord);

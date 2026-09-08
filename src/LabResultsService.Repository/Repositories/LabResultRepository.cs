@@ -15,7 +15,6 @@ namespace LabResultsService.Repository.Repositories
                 throw new InvalidOperationException("Can't add alient records");
             }
 
-            //TODO : enclose in try catch
             await _dbContext.LabResults.AddAsync(labResultInformation);
             await _dbContext.SaveChangesAsync();
 
