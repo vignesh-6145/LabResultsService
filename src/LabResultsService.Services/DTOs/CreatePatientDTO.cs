@@ -15,6 +15,7 @@ namespace LabResultsService.Services.DTOs
         [MaxLength(126, ErrorMessage = "Last name must not exceed 126 characters.")]
         public string LastName { get; set; }
 
-        public string MiddleName { get; set; }
+        [AllowNull]
+        public string? MiddleName { get; set; }
     }
 }

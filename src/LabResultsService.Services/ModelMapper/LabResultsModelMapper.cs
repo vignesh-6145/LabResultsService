@@ -11,7 +11,8 @@ namespace LabResultsService.Services.ModelMapper
             PatientId = Guid.Parse(dto.PatientId),
             ResultValue = dto.ResultValue.Trim(),
             TestName = dto.TestName.Trim(),
-            Unit = dto.Unit.Trim()
+            Unit = dto.Unit.Trim(),
+            IsActive = true
         };
     }
 }

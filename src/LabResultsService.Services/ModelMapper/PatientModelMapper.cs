@@ -9,7 +9,8 @@ namespace LabResultsService.Services.ModelMapper
         {
              FirstName = dto.FirstName.Trim(),   
              LastName = dto.LastName.Trim(),
-             MiddleName = dto.MiddleName.Trim(),
+             MiddleName = dto.MiddleName?.Trim(),
+             IsActive = true
         };
     }
 }
