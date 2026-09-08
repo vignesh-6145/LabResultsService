@@ -4,6 +4,7 @@ using LabResultsService.Repository.Interfaces;
 using LabResultsService.Services.DTOs;
 using LabResultsService.Services.Interfaces;
 using LabResultsService.Services.ModelMapper;
+using LabResultsService.Services.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace LabResultsService.Services.Services
@@ -14,17 +15,12 @@ namespace LabResultsService.Services.Services
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
 
-            var validGuid = Guid.TryParse(id, out var parsedId);
-
-            if (!validGuid)
-            {
-                throw new InvalidDataException(id);
-            }
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(id);
 
             var labResult = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
             if (labResult is null)
             {
-                throw new ResourceNotFoundException($"No matching {nameof(labResult)} record found for Id {id}");
+                throw new ResourceNotFoundException($"No matching LabResult record found for Id {id}");
             }
             labResult.IsActive = false;
 
@@ -34,39 +30,22 @@ namespace LabResultsService.Services.Services
         public async Task<IEnumerable<LabResult>> FilterLabResultsByPatientIdAsync(string patientId, bool includeDeletedRecords = false)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(patientId);
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(patientId);
+            await ValidateExistingUser(patientId);
 
-            var validGuid = Guid.TryParse(patientId, out var parsedId);
-
-            if (!validGuid)
-            {
-                throw new InvalidDataException(patientId);
-            }
-
-            var userExists = await _patientService.IsAValidUser(patientId);
-            if (!userExists)
-            {
-                _logger.LogInformation("No patient Exists with the given Id {Patientid}",patientId);
-                throw new ResourceNotFoundException($"No matching patient record found for Id {patientId}");
-            }
-
-            var patientRecords = await _labResultsRepository.GetLabResultsBypatientIdAsync(parsedId);
+            var patientRecords = await _labResultsRepository.GetLabResultsByPatientIdAsync(parsedId);
 
             if (includeDeletedRecords)
                 return patientRecords;
 
             return patientRecords.Where(record => record.IsActive);
-        }
+        }    
 
         public async Task<LabResult?> GetLabResultByIdAsync(string id)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
 
-            var validGuid = Guid.TryParse(id, out var parsedId);
-
-            if (!validGuid)
-            {
-                throw new InvalidDataException(id);
-            }
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(id);
 
             return await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
         }
@@ -80,8 +59,13 @@ namespace LabResultsService.Services.Services
             ArgumentNullException.ThrowIfNullOrWhiteSpace(request.Unit, nameof(request.Unit));
             ArgumentNullException.ThrowIfNullOrWhiteSpace(request.PatientId, nameof(request.PatientId));
 
+
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(request.PatientId);
+            await ValidateExistingUser(request.PatientId);
+
             var labResultInfo = LabResultsModelMapper.FromRecordLabResultDTO(request);
-            var labResultId = await _labResultsRepository.AddlabResultAsync(labResultInfo);
+
+            var labResultId = await _labResultsRepository.AddLabResultAsync(labResultInfo);
 
             if (labResultId != Guid.Empty)
             {
@@ -94,29 +78,19 @@ namespace LabResultsService.Services.Services
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
 
-            var validGuid = Guid.TryParse(id, out var parsedId);
-
-            if (!validGuid)
-            {
-                throw new InvalidDataException(id);
-            }
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(id);
 
             var existantRecord = await _labResultsRepository.GetLabResultsByIdAsync(parsedId);
             string originalValue = string.Empty;
 
             if (existantRecord is null)
             {
-                throw new ResourceNotFoundException($"No amtching {nameof(existantRecord)} record found for Id {id}");
+                throw new ResourceNotFoundException($"No matching {nameof(existantRecord)} record found for Id {id}");
             }
             
             if (updatedRecord.PatientId.HasValue)
             {
-                var userExists = await _patientService.IsAValidUser(updatedRecord.PatientId.Value.ToString());
-                if (!userExists)
-                {
-                    _logger.LogInformation("No patient Exists with the given Id {Patientid}", updatedRecord.PatientId.Value.ToString());
-                    throw new ResourceNotFoundException($"No matching patient record found for Id {updatedRecord.PatientId.Value.ToString()}");
-                }
+                await ValidateExistingUser(updatedRecord.PatientId.Value.ToString());
 
                 originalValue = existantRecord.PatientId.ToString();
                 existantRecord.PatientId = updatedRecord.PatientId.Value;
@@ -141,7 +115,7 @@ namespace LabResultsService.Services.Services
             {
                 originalValue = existantRecord.Unit;
                 existantRecord.Unit = updatedRecord.Unit;
-                _logger.LogInformation("Modified the Unit from {OriginalUnit} to {Modifiedunit}", originalValue, updatedRecord.Unit);
+                _logger.LogInformation("Modified the Unit from {OriginalUnit} to {ModifiedUnit}", originalValue, updatedRecord.Unit);
             }
 
             if (updatedRecord.ObservedDate.HasValue)
@@ -158,6 +132,16 @@ namespace LabResultsService.Services.Services
             }
 
             return await _labResultsRepository.UpdateLabResultAsync(existantRecord);
+        }
+
+        private async Task ValidateExistingUser(string patientId)
+        {
+            var userExists = await _patientService.IsAValidUserAsync(patientId);
+            if (!userExists)
+            {
+                _logger.LogInformation("No patient exists with the given Id {PatientId}", patientId);
+                throw new ResourceNotFoundException($"No matching patient record found for Id {patientId}");
+            }
         }
     }
 }

@@ -28,10 +28,14 @@ namespace LabResultsService.Repository.Repositories
             return Guid.Empty;
         }
 
-        public async Task<bool> UserExists(Guid id)
+        public async Task<bool> PatientExistsAsync(Guid id)
         {
-            var user = await _dbContext.LabResults.FirstOrDefaultAsync(record => record.Id == id && record.IsActive);
-            return (user != null);
+            if(id == Guid.Empty)
+            {
+                return false;
+            }
+
+            return await _dbContext.Patients.AnyAsync(record => record.Id == id && record.IsActive);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace LabResultsService.Repository.Repositories
 {
     public class LabResultRepository(LabResultsDbContext _dbContext, ILogger<LabResultRepository> _logger) : ILabResultsRepository
     {
-        public async Task<Guid> AddlabResultAsync(LabResult labResultInformation)
+        public async Task<Guid> AddLabResultAsync(LabResult labResultInformation)
         {
             if(labResultInformation.PatientId == Guid.Empty)
             {
@@ -28,7 +28,7 @@ namespace LabResultsService.Repository.Repositories
             return await _dbContext.LabResults.FindAsync(Id);
         }
 
-        public async Task<IEnumerable<LabResult>> GetLabResultsBypatientIdAsync(Guid patientId)
+        public async Task<IEnumerable<LabResult>> GetLabResultsByPatientIdAsync(Guid patientId)
         {
             var patientRecords = await _dbContext.LabResults.Where(record => record.PatientId == patientId).ToListAsync();
             return patientRecords;
@@ -42,11 +42,11 @@ namespace LabResultsService.Repository.Repositories
                 await _dbContext.SaveChangesAsync();
                 _logger.LogInformation($"Changes were updated in the records");
                 return true;
-            }catch(Exception ex)
+            }catch(DbUpdateException dex)
             {
-                _logger.LogError(ex, "Unable to update the record. Message {ErrorMessage}",ex.InnerException);
+                _logger.LogError(dex, "Failed to insert lab result. Database error.");
+                throw new InvalidDataException("Unable to save lab result. Invalid data.", dex);
             }
-            return false;
         }
     }
 }

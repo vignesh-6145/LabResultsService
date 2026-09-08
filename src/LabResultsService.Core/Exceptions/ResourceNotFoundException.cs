@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LabResultsService.Core.Exceptions
+﻿namespace LabResultsService.Core.Exceptions
 {
     public class ResourceNotFoundException : Exception
     {

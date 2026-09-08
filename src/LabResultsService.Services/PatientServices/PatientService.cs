@@ -1,6 +1,7 @@
 ﻿using LabResultsService.Repository.Interfaces;
 using LabResultsService.Services.Interfaces;
 using LabResultsService.Services.ModelMapper;
+using LabResultsService.Services.Utils;
 using LabResultsService.Services.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +26,7 @@ namespace LabResultsService.Services.PatientServices
 
                 return patientUniqueId;
             }
+
             catch (Exception ex) {
                 _logger.LogError(ex,"Unable to create patient record {Message}",ex.Message);
             }
@@ -32,18 +34,13 @@ namespace LabResultsService.Services.PatientServices
             return Guid.Empty;
         }
 
-        public Task<bool> IsAValidUser(string id)
+        public Task<bool> IsAValidUserAsync(string id)
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(id);
 
-            var validGuid = Guid.TryParse(id, out var parsedId);
+            Guid parsedId = GuidUtils.ParseGuidOrThrow(id);
 
-            if (!validGuid)
-            {
-                throw new InvalidDataException(id);
-            }
-
-            return _patientRepository.UserExists(parsedId);
+            return _patientRepository.PatientExistsAsync(parsedId);
         }
     }
 }

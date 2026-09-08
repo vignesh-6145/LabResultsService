@@ -1,8 +1,11 @@
+using LabResultsService.API.Infrastructure;
 using LabResultsService.Repository;
 using LabResultsService.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Add services to the container.
 
@@ -22,6 +25,7 @@ builder.Services.RegisterContext(builder.Configuration.GetConnectionString("Defa
 builder.Services.RegisterRepositories();
 
 var app = builder.Build();
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

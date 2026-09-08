@@ -8,6 +8,6 @@ namespace LabResultsService.Repository.Interfaces
     public interface IPatientRepository
     {
         public Task<Guid> AddPatientAsync(Patient patientDetails);
-        public Task<bool> UserExists(Guid Id);
+        public Task<bool> PatientExistsAsync(Guid id);
     }
 }
